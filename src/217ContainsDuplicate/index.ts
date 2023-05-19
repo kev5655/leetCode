@@ -12,6 +12,7 @@ function containsDuplicate(nums: number[]): boolean {
 console.log(containsDuplicate([1, 2, 3, 1]));
 console.log(containsDuplicate([1, 2, 3, 4]));
 
+// Time O(n) Space O(n)
 function containsDuplicate1(nums: number[]): boolean {
     const sorted = nums.sort();
     for(let i = 1; i < sorted.length; i++){
