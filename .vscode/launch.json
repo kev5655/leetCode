@@ -9,6 +9,12 @@
             "name": "Debugg 2AddTwoNumbers",
             "request": "launch",
             "type": "node-terminal"
+          },
+          {
+            "command": "ts-node ./src/1TwoSum/index.ts",
+            "name": "Debugg 1TwoSum",
+            "request": "launch",
+            "type": "node-terminal"
           }
     ]
 }
