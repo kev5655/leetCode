@@ -12,23 +12,60 @@ function groupAnagrams(strs: string[]): string[][] {
     }, new Array<{ [key: string]: number }>());
     console.log(mapList);
 
-    const refLinks: { [key: number]: number[] } = {};
+    let refLinks: (number | undefined)[][] = [];
 
     for (let i = 0; i < mapList.length; i++) {
+        let wasTrue = false;
         for (let j = i + 1; j < mapList.length; j++) {
-            const savedIndex = Object.values(refLinks).flatMap(x => x);
-            if (savedIndex.find(x => x === i) !== undefined) continue;
             let isSame = mapComparer(mapList[i], mapList[j]);
 
             if (isSame) {
-                refLinks[i] = refLinks[i] ? [...refLinks[i], j] : [j];
+                wasTrue = true;
+                refLinks[i] = refLinks[i] === undefined ? [i, j] : [...refLinks[i], j];
+                // console.log('🚀 ~ file: index.ts:25 ~ groupAnagrams ~ refLinks:', i, refLinks);
             }
         }
     }
-
+    for (let i = 0; i < refLinks.length - 1; i++) {
+        const first = refLinks[i];
+        const second = refLinks[i + 1];
+        for (let j = i; j < refLinks[i].length; j++) {
+            if (second.find(x => first[j])) {
+                refLinks[i + 1] = [undefined];
+                i++;
+                break;
+            }
+        }
+    }
     console.log('🚀 ~ file: index.ts:28 ~ groupAnagrams ~ refLinks:', refLinks);
 
-    return [[]];
+    let refLinksNotUndefined: number[][] = refLinks.filter(function (element) {
+        return element.find(x => x !== undefined) !== undefined;
+    }) as number[][];
+    console.log('🚀 ~ file: index.ts:28 ~ groupAnagrams ~ refLinks:', refLinksNotUndefined);
+
+    const allIndexes: number[] = Array.from(Array(strs.length).keys());
+
+    let notUsedIndexes: number[] | number[][] = allIndexes.filter(
+        x => refLinksNotUndefined.flatMap(x => x).find(y => y === x) === undefined,
+    );
+    notUsedIndexes = notUsedIndexes.map(x => [x]);
+    console.log('🚀 ~ file: index.ts:58 ~ groupAnagrams ~ notUsedIndexes:', notUsedIndexes);
+    refLinksNotUndefined = [...refLinksNotUndefined, ...notUsedIndexes];
+    console.log('🚀 ~ file: index.ts:61 ~ groupAnagrams ~ refLinksNotUndefined:', refLinksNotUndefined);
+
+    const result: string[][] = [];
+
+    for (let i = 0; i < refLinksNotUndefined.length; i++) {
+        for (let j = 0; j < refLinksNotUndefined[i].length; j++) {
+            if (result[i] === undefined) {
+                result[i] = [''];
+            }
+            result[i][j] = strs[refLinksNotUndefined[i][j]];
+        }
+    }
+
+    return result;
 }
 
 const mapComparer = (map1: { [key: string]: number }, map2: { [key: string]: number }): boolean => {
@@ -47,4 +84,4 @@ const buildStringFromMap = (map: { [key: string]: number }): string => {
     return Object.keys(map).join('');
 };
 
-console.log(groupAnagrams(['eat', 'tea', 'tan', 'ate', 'nat', 'bat']));
+console.log(groupAnagrams(['hhhhu', 'tttti', 'tttit', 'hhhuh', 'hhuhh', 'tittt']));
